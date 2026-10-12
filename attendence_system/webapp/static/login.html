@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in to VertexAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css"></head>
+<body>
+<div class="login-wrap">
+  <section class="login-art">
+    <div class="brand"><div class="brand-mark">R</div><div><b>VertexAI</b><span>Face-recognition attendance</span></div></div>
+    <div><h1>Attendance from a few class photos.</h1>
+      <p>Each class opens at its timetable slot, matches faces only against that section's enrolled students, and freezes shortly after the class ends.</p></div>
+    <div class="login-steps">
+      <div><b>1</b>Admin enrolls students from a zip of photos and assigns sections.</div>
+      <div><b>2</b>Admin publishes the timetable for each employee.</div>
+      <div><b>3</b>Employees upload class photos during the slot and correct any misses.</div>
+    </div>
+  </section>
+  <section class="login-form">
+    <form id="f" autocomplete="on">
+      <h2 style="font-size:22px">Sign in</h2>
+      <div class="seg" id="role" style="align-self:flex-start"><button type="button" data-r="employee" class="on">Employee</button><button type="button" data-r="admin">Admin</button></div>
+      <label class="field">Username<input id="u" autocomplete="username" required></label>
+      <label class="field">Password<input id="p" type="password" autocomplete="current-password" required></label>
+      <label class="field" id="empf">Employee ID<input id="e" placeholder="As shown on the timetable, e.g. EMP101"></label>
+      <div class="err-text" id="err" role="alert"></div>
+      <button class="btn primary" style="justify-content:center;padding:10px">Sign in</button>
+      <p class="faint small">Demo accounts: admin / admin and employee / employee.</p>
+    </form>
+  </section>
+</div>
+<script src="/static/js/common.js"></script>
+<script>
+  let role = "employee";
+  document.querySelectorAll("#role button").forEach((b) => b.onclick = () => {
+    role = b.dataset.r;
+    document.querySelectorAll("#role button").forEach((x) => x.classList.toggle("on", x === b));
+    document.getElementById("empf").hidden = role !== "employee";
+  });
+  document.getElementById("f").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const err = document.getElementById("err"); err.textContent = "";
+    try {
+      const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role, username: u.value.trim(), password: p.value, emp_id: e.value.trim() }) });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail);
+      location.href = role === "admin" ? "/admin" : "/employee";
+    } catch (x) { err.textContent = x.message; }
+  };
+</script>
+</body></html>

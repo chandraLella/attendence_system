@@ -1,0 +1,19 @@
+# Core inference
+insightface==0.7.3          # SCRFD detector + ArcFace recognizer (model packs)
+onnxruntime>=1.17           # CPU. For NVIDIA GPU: uninstall this and install onnxruntime-gpu
+opencv-python-headless>=4.9
+numpy>=1.24
+scipy>=1.10                 # Hungarian assignment
+# Data / IO
+pandas>=2.0
+openpyxl>=3.1
+Pillow>=10.0
+pillow-heif>=0.16           # iPhone HEIC uploads
+gdown>=5.1                  # Google Drive downloads
+requests>=2.31
+tqdm>=4.66
+# Web app, on top of the existing requirements.txt (insightface, onnxruntime, opencv, pandas, openpyxl, scipy, ...)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9      # file uploads
+itsdangerous>=2.1            # signed session cookie
